@@ -9,13 +9,13 @@ module.exports = {
 
 function find() {
   return db('users')
-    .select('id', 'username', 'department');
+    .select('id', 'username');
 }
 
 function findBy(filter) {
   return db('users')
     .where(filter)
-    .select('id', 'username', 'department', 'password')
+    .select('id', 'username', 'password')
     .first();
 }
 
