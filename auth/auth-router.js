@@ -5,7 +5,7 @@ const secrets = require('../config/secrets.js');
 
 const Users = require('../users/usersModel.js');
 
-router.post('/register', (req, res) => {
+router.post('/register', checkDuplicate, (req, res) => {
   const user = req.body;
   const hash = bcrypt.hashSync(user.password, 10);
   user.password = hash;
@@ -57,6 +57,21 @@ function signToken(user) {
   };
 
   return jwt.sign(payload, secrets.jwtSecret, options);
+}
+
+function checkDuplicate(req, res, next) {
+  const { username } = req.body;
+
+  Users.findBy({username})
+  .then(user => {
+    console.log(user)
+    if (user) {
+      res.status(400).json({ message: "Username is taken"})
+    } else {
+      next()
+    }
+  })
+  .catch(err => console.log(err))
 }
 
 module.exports = router;
